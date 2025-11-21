@@ -107,26 +107,39 @@ function updateConfidenceHint() {
   else if (val > 70) hint.textContent = "— уверенность —";
   else hint.textContent = "— равновесие решений —";
 }
-// === Терминальный экран ===
+// === Терминальный экран и запуск игры ===
 window.addEventListener("DOMContentLoaded", () => {
   const agree = document.getElementById("btnAgree");
   const refuse = document.getElementById("btnRefuse");
   const overlay = document.getElementById("terminalOverlay");
 
-  if (agree && overlay) {
-    agree.addEventListener("click", async () => {
-      overlay.classList.add("fade-out");
-      await Diagnostics.sleep(800);
-      overlay.remove();
-      startGame();
-    });
+  // Проверяем наличие всех элементов
+  if (!agree || !refuse || !overlay) {
+    console.warn("⚠️ Терминальный экран не найден!");
+    return;
   }
 
-  if (refuse) {
-    refuse.addEventListener("click", () => {
-      alert("Симуляция прервана. Система завершает сеанс.");
-      window.close();
-    });
-  }
+  // Когда игрок подтверждает участие
+  agree.addEventListener("click", async () => {
+    overlay.classList.add("fade-out");
+
+    // ждём плавное исчезновение
+    await new Promise(r => setTimeout(r, 900));
+
+    // убираем оверлей
+    overlay.remove();
+
+    // показываем основной интерфейс
+    document.getElementById("mainGame").classList.remove("hidden");
+    document.getElementById("intro").classList.remove("hidden");
+    document.getElementById("intro").classList.add("fade-in");
+
+    console.log("[СИСТЕМА]: запуск симуляции...");
+  });
+
+  // Если игрок отказывается
+  refuse.addEventListener("click", () => {
+    alert("Симуляция прервана. Сеанс завершён.");
+    window.close();
+  });
 });
-
