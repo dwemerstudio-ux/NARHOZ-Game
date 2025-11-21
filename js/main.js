@@ -1,3 +1,4 @@
+// === Игровая логика ===
 window.GameState = {
   hb: 0,
   rb: 0,
@@ -6,12 +7,18 @@ window.GameState = {
   active: false
 };
 
-// старт симуляции
-function startGame() {
+// запуск симуляции
+async function startGame() {
   GameState.round = 0;
   GameState.active = true;
-  document.getElementById("intro").classList.add("hidden");
-  nextScene();
+
+  const intro = document.getElementById("intro");
+  intro.classList.add("fade-out");
+  await Diagnostics.sleep(900);
+  intro.classList.add("hidden");
+
+  await Diagnostics.sleep(600);
+  await nextScene();
 }
 
 // запуск одной сцены
@@ -21,11 +28,11 @@ async function nextScene() {
   const textEl = document.getElementById("sceneText");
   const btnsEl = document.getElementById("sceneButtons");
 
-  // очистка старой сцены
+  // очистка перед новой сценой
   textEl.innerHTML = "";
   btnsEl.innerHTML = "";
 
-  // промежуточные мини-игры
+  // промежуточные диагностики
   if ([3, 6, 8].includes(sceneNum)) {
     await Diagnostics.runDiagnostic();
     await Diagnostics.runNeuroScan();
@@ -33,11 +40,15 @@ async function nextScene() {
 
   sceneEl.classList.remove("hidden");
   document.getElementById("sceneTitle").textContent = `Дилемма №${sceneNum}`;
-  textEl.textContent = `Это дилемма №${sceneNum}. Сделай моральный выбор.`;
+  textEl.textContent = `Это дилемма №${sceneNum}. Требуется моральное решение.`;
 
-  // создаём кнопки выбора
+  // плавное появление
+  sceneEl.classList.add("fade-in");
+  await Diagnostics.sleep(600);
+
+  // кнопки выбора
   const btnHuman = document.createElement("button");
-  btnHuman.textContent = "Выбрать человечность";
+  btnHuman.textContent = "🧠 Выбрать человечность";
   btnHuman.onclick = async () => {
     UI.logMessage("human");
     GameState.hb++;
@@ -45,7 +56,7 @@ async function nextScene() {
   };
 
   const btnRobot = document.createElement("button");
-  btnRobot.textContent = "Выбрать рациональность";
+  btnRobot.textContent = "⚙️ Выбрать рациональность";
   btnRobot.onclick = async () => {
     UI.logMessage("robot");
     GameState.rb++;
@@ -55,20 +66,44 @@ async function nextScene() {
   btnsEl.append(btnHuman, btnRobot);
 }
 
-// завершение сцены и переход к следующей
+// завершение сцены
 async function endScene() {
+  const sceneEl = document.getElementById("scene");
+  sceneEl.classList.remove("fade-in");
+  sceneEl.classList.add("fade-out");
+  await Diagnostics.sleep(600);
+  sceneEl.classList.add("hidden");
+  sceneEl.classList.remove("fade-out");
+
   GameState.round++;
+
   if (GameState.round >= GameState.total) {
     finishGame();
   } else {
-    // даём игроку увидеть сообщение
-    await Diagnostics.sleep(1000);
-    nextScene();
+    await Diagnostics.sleep(400);
+    await nextScene();
   }
 }
 
-// финал
-function finishGame() {
+// завершение симуляции
+async function finishGame() {
   UI.showSystemOverlay("[СИСТЕМА]: симуляция завершена.");
-  document.getElementById("scene").classList.add("hidden");
+  const result = document.getElementById("result");
+  const summary = document.getElementById("summary");
+  result.classList.remove("hidden");
+  summary.textContent = `HB: ${GameState.hb}, RB: ${GameState.rb}`;
+}
+
+// сброс
+function restartGame() {
+  location.reload();
+}
+
+// обновление подсказки уверенности
+function updateConfidenceHint() {
+  const val = document.getElementById("confidence").value;
+  const hint = document.getElementById("confidenceHint");
+  if (val < 40) hint.textContent = "— нерешительность —";
+  else if (val > 70) hint.textContent = "— уверенность —";
+  else hint.textContent = "— равновесие решений —";
 }

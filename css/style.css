@@ -1,146 +1,93 @@
 :root {
-  --bg: #0b1020;
-  --text: #e2e8f0;
+  --bg: #010e0e;
+  --text: #00ffcc;
   --muted: #94a3b8;
   --primary: #60a5fa;
-  --primary2: #a78bfa;
-  --green: #00ffcc;
+  --accent: #00ffaa;
 }
 
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+  background: radial-gradient(circle at 50% 40%, #001a1a, #000 80%);
   color: var(--text);
-  font-family: system-ui, sans-serif;
+  font-family: "Courier New", monospace;
   overflow-x: hidden;
-}
-
-main {
-  max-width: 760px;
-  margin: auto;
-  padding: 2rem;
+  min-height: 100vh;
 }
 
 .hidden {
   display: none !important;
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* --- Терминальный фон --- */
-#terminalOverlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% 40%, #001010, #000 80%);
-  color: #00ffcc;
-  font-family: "Courier New", monospace;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  transition: opacity 1s ease;
-  overflow: hidden;
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+.fade-out {
+  animation: fadeOut 0.8s ease forwards;
 }
 
-#terminalBox {
-  max-width: 700px;
-  padding: 2rem;
-  border: 1px solid #00ffaa;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(10px); }
 }
 
-#terminalText {
-  white-space: pre-line;
-  font-size: 1rem;
-  line-height: 1.5em;
-  min-height: 200px;
-}
-
-#cursor {
-  display: inline-block;
-  width: 10px;
-  background: #00ffaa;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-/* --- Элементы сцен --- */
+/* --- Секция --- */
 section {
-  background: linear-gradient(180deg, #0f172a, #0b1224);
+  background: rgba(0, 40, 40, 0.25);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  box-shadow: 0 0 20px #00ffaa22;
   padding: 2rem;
-  border-radius: 24px;
-  box-shadow: 0 8px 30px #0006;
-  margin-bottom: 2rem;
+  margin: 2rem auto;
+  max-width: 700px;
 }
 
-h1 {
+/* --- Заголовки --- */
+h1, h2 {
   text-align: center;
-  font-weight: 900;
-  font-size: 2.2rem;
-  color: #c7d2fe;
-  text-shadow: 0 0 20px #7c3aed;
+  color: var(--accent);
 }
 
-/* --- Шкалы --- */
-.bar-wrap {
-  display: flex;
-  height: 24px;
-  background: #1e293b;
+/* --- Кнопки --- */
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 16px;
+  font-family: inherit;
+  color: #000;
+  font-weight: 600;
+  background: var(--accent);
+  border: none;
   border-radius: 8px;
-  overflow: hidden;
-  margin: 1rem 0;
+  transition: transform 0.15s ease, box-shadow 0.3s;
+  cursor: pointer;
 }
-.bar-hb {
-  background: #38bdf8;
-  transition: width 0.3s ease;
-}
-.bar-rb {
-  background: #c084fc;
-  transition: width 0.3s ease;
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px var(--accent);
 }
 
-/* --- Подсказка уверенности --- */
+/* --- Шкала уверенности --- */
+input[type=range] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
 #confidenceHint {
   text-align: center;
+  color: var(--muted);
   font-style: italic;
-  color: #94a3b8;
-  margin-top: 0.5rem;
+  margin-top: 8px;
 }
 
-/* --- Toast уведомления --- */
-#toast-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 9999;
-}
-.toast {
-  padding: 10px 16px;
-  border-radius: 10px;
-  color: #fff;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-  box-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-.toast.green {
-  background: linear-gradient(135deg, #34d399, #10b981);
-}
-
-/* --- Системное всплывающее сообщение --- */
+/* --- Системные оверлеи --- */
 .system-overlay {
   position: fixed;
   inset: 0;
@@ -148,9 +95,8 @@ h1 {
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at 50% 50%, #00ffcc11, #000000cc 80%);
-  color: #00ffcc;
-  font-family: monospace;
-  font-size: 1.2rem;
+  color: var(--text);
+  font-size: 1.1rem;
   opacity: 0;
   transition: opacity 0.6s ease;
   z-index: 9999;
