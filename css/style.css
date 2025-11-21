@@ -54,6 +54,7 @@ html, body {
   padding: 2rem;
   width: 700px;
   max-width: 90%;
+  text-align: left;
 }
 
 #terminalText {
